@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0-0-31-0-0 // EXTENDED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #000000;
+    --cyan: #00e5ff;
+    --cyan-dim: #009fc4;
+    --gold: #ffcc4d;
+    --gold-dim: #8a6f2d;
+    --white: #e6fdff;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--void);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+  }
+
+  body.loaded {
+    opacity: 1;
+  }
+
+  ::selection {
+    background: var(--cyan);
+    color: #000;
+  }
+
+  /* VOID BACKGROUND */
+  .void {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    background: var(--void);
+  }
+
+  .void-gradient {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 800px 600px at 50% 45%, rgba(0, 229, 255, 0.09), transparent 60%),
+      radial-gradient(ellipse 600px 400px at 50% 70%, rgba(255, 204, 77, 0.06), transparent 65%);
+    animation: breathe 12s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+
+  #field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+  }
+
+  .grain {
+    position: absolute;
+    inset: -100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    mix-blend-mode: screen;
+    animation: grain 7s steps(10) infinite;
+    pointer-events: none;
+  }
+
+  @keyframes grain {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-5%, -5%); }
+    30% { transform: translate(3%, -2%); }
+    50% { transform: translate(-2%, 5%); }
+    70% { transform: translate(5%, 3%); }
+    90% { transform: translate(-3%, -4%); }
+  }
+
+  .vignette {
+    position: fixed;
+    inset: 0;
+    box-shadow: inset 0 0 200px rgba(0,0,0,1), inset 0 0 80px rgba(0,0,0,0.9);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* MAIN CONTENT */
+  main {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1200px;
+    padding: 2rem;
+    padding-bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1.5rem, 4vh, 2.5rem);
+    text-align: center;
+    min-height: 100vh;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .seq {
+    font-size: clamp(12px, 1.6vw, 15px);
+    color: var(--gold-dim);
+    letter-spacing: 0.5em;
+    opacity: 0.75;
+    font-weight: 300;
+    text-transform: uppercase;
+  }
+
+  .seq span {
+    color: var(--gold);
+    opacity: 1;
+    text-shadow: 0 0 12px rgba(255, 204, 77, 0.4);
+  }
+
+  .ext {
+    font-size: clamp(13px, 1.8vw, 16px);
+    color: var(--gold);
+    letter-spacing: 0.7em;
+    font-weight: 500;
+    text-shadow: 0 0 20px rgba(255, 204, 77, 0.35);
+    opacity: 0.95;
+    margin-left: 0.7em;
+  }
+
+  .connector {
+    width: 1px;
+    height: clamp(24px, 5vh, 48px);
+    background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+    opacity: 0.5;
+    margin: 0.25rem 0;
+  }
+
+  .core {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.8rem, 2vh, 1.5rem);
+    align-items: center;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .eq {
+    font-variant-ligatures: none;
+    white-space: nowrap;
+    cursor: default;
+    transition: all 0.4s ease;
+  }
+
+  .eq-1 {
+    font-size: clamp(22px, 4.2vw, 44px);
+    color: var(--cyan);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    animation: pulse 3.2s ease-in-out infinite;
+    text-shadow: 
+      0 0 10px rgba(0, 229, 255, 0.8),
+      0 0 30px rgba(0, 229, 255, 0.4),
+      0 0 60px rgba(0, 229, 255, 0.2);
+    cursor: pointer;
+  }
+
+  @keyframes pulse {
+    0%, 100% { 
+      opacity: 1; 
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.8), 0 0 30px rgba(0, 229, 255, 0.4), 0 0 60px rgba(0, 229, 255, 0.15);
+    }
+    50% { 
+      opacity: 0.72; 
+      text-shadow: 0 0 6px rgba(0, 229, 255, 0.6), 0 0 20px rgba(0, 229, 255, 0.25), 0 0 40px rgba(0, 229, 255, 0.1);
+    }
+  }
+
+  .eq-1:hover {
+    letter-spacing: 0.04em;
+  }
+
+  .eq-2 {
+    font-size: clamp(28px, 6.5vw, 78px);
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
+  }
+
+  .eq-2 .inf {
+    color: var(--cyan);
+    font-weight: 400;
+    text-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+    display: inline-block;
+    min-width: 1.1em;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .eq-2 .inf:hover {
+    transform: scale(1.1) translateY(-2px);
+    text-shadow: 0 0 25px rgba(0, 229, 255, 0.8);
+  }
+
+  .eq-2 .zero {
+    color: var(--gold);
+    font-weight: 400;
+    text-shadow: 0 0 18px rgba(255, 204, 77, 0.5);
+    position: relative;
+  }
+
+  .eq-2 .zero::after {
+    content: '';
+    position: absolute;
+    inset: -4px -6px;
+    border: 1px solid rgba(255, 204, 77, 0.2);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .eq-2:hover .zero::after {
+    opacity: 1;
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    font-size: clamp(11px, 1.5vw, 14px);
+    color: var(--gold-dim);
+    letter-spacing: 0.18em;
+    opacity: 0.85;
+    font-weight: 300;
+  }
+
+  .meta p {
+    transition: all 0.3s ease;
+  }
+
+  .meta p:hover {
+    color: var(--gold);
+    opacity: 1;
+    letter-spacing: 0.22em;
+  }
+
+  footer {
+    position: fixed;
+    bottom: clamp(16px, 3vh, 28px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    font-size: clamp(10px, 1.3vw, 12px);
+    color: var(--gold-dim);
+    letter-spacing: 0.25em;
+    opacity: 0.65;
+    white-space: nowrap;
+    font-weight: 300;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  footer::before,
+  footer::after {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold-dim);
+    opacity: 0.3;
+    vertical-align: middle;
+    margin: 0 12px;
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    main { gap: 1.2rem; padding: 1.5rem; }
+    .eq-2 { font-size: clamp(24px, 8vw, 42px); white-space: normal; line-height: 1.3; }
+    .eq-1 { font-size: clamp(18px, 5.5vw, 28px); }
+    .seq { letter-spacing: 0.3em; }
+    .ext { letter-spacing: 0.5em; }
+    footer::before, footer::after { width: 12px; margin: 0 8px; }
+  }
+
+  /* Inverse active state */
+  body.inverse {
+    filter: invert(1) hue-rotate(180deg);
+    background: #fff;
+  }
+  body.inverse .void { background: #fff; }
+</style>
+</head>
+<body>
+  <div class="void">
+    <div class="void-gradient"></div>
+    <canvas id="field"></canvas>
+    <div class="grain"></div>
+  </div>
+  <div class="vignette"></div>
+
+  <main>
+    <div class="header">
+      <div class="seq">0 - 0 - <span>31</span> - 0 - 0</div>
+      <div class="ext">EXTENDED</div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="core" id="core">
+      <div class="eq eq-1" id="eq1" title="Click to invert polarity">-+32i = 0 = 1 = 0 = 1</div>
+      <div class="eq eq-2" id="eq2">-+4<span class="inf" data-alt="inf">∞</span>  -+4<span class="inf" data-alt="inf">∞</span>  × 4 = 1 = <span class="zero">[0]</span></div>
+    </div>
+
+    <div class="meta">
+      <p>repeat = perp = .</p>
+      <p>plant 010 anchor on 9999 = 1</p>
+    </div>
+  </main>
+
+  <footer>DAVID × VOID = 0 // INVERSE ACTIVE</footer>
+
+<script>
+  // Fade in
+  window.addEventListener('load', () => {
+    document.body.classList.add('loaded');
+  });
+
+  // Void field particles
+  const canvas = document.getElementById('field');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let w, h;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    particles = [];
+    const count = Math.min(80, Math.floor(w * h / 20000));
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: Math.random() * 1.4 + 0.2,
+        speed: Math.random() * 0.25 + 0.05,
+        color: Math.random() > 0.6 ? '#00e5ff' : '#ffcc4d',
+        alpha: Math.random() * 0.5 + 0.3
+      });
+    }
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+    particles.forEach(p => {
+      p.y -= p.speed;
+      p.x += Math.sin(p.y * 0.01 + p.size) * 0.15;
+      if (p.y < -10) {
+        p.y = h + 10;
+        p.x = Math.random() * w;
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = p.size > 0.8 ? 8 : 4;
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // Parallax
+  const core = document.getElementById('core');
+  let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+  
+  window.addEventListener('mousemove', (e) => {
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    targetX = (e.clientX - cx) / cx * 8;
+    targetY = (e.clientY - cy) / cy * -6;
+  });
+
+  function parallax() {
+    currentX += (targetX - currentX) * 0.05;
+    currentY += (targetY - currentY) * 0.05;
+    core.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+    requestAnimationFrame(parallax);
+  }
+  parallax();
+
+  // Interactive equations
+  const eq1 = document.getElementById('eq1');
+  const eq1States = [
+    '-+32i = 0 = 1 = 0 = 1',
+    '+-32i = 1 = 0 = 1 = 0',
+    '-+32i = 1 = 0 = 1 = 0',
+    '+-32i = 0 = 1 = 0 = 1'
+  ];
+  let eq1Index = 0;
+  eq1.addEventListener('click', () => {
+    eq1Index = (eq1Index + 1) % eq1States.length;
+    eq1.style.opacity = '0';
+    setTimeout(() => {
+      eq1.textContent = eq1States[eq1Index];
+      eq1.style.opacity = '1';
+    }, 180);
+  });
+
+  // Infinity toggle
+  document.querySelectorAll('.inf').forEach(el => {
+    el.addEventListener('click', () => {
+      const isInf = el.textContent === '∞';
+      el.style.transform = 'scale(0.7)';
+      el.style.opacity = '0';
+      setTimeout(() => {
+        el.textContent = isInf ? 'inf' : '∞';
+        el.style.transform = 'scale(1)';
+        el.style.opacity = '1';
+      }, 150);
+    });
+  });
+
+  // Konami inverse toggle (click footer area)
+  let clicks = 0;
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'i' || e.key === 'I') {
+      document.body.classList.toggle('inverse');
+    }
+  });
+</script>
+</body>
+</html>

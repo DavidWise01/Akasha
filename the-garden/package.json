@@ -1,0 +1,12 @@
+{
+  "name": "pocket-universe",
+  "version": "1.0.0",
+  "description": "-+4 inf -+4 inf x 4 = 1 = [0] // 010 anchor 9999=1",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
