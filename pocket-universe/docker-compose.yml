@@ -1,0 +1,53 @@
+services:
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: pocket-universe_mqtt
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    networks:
+      - pocket
+
+  stargate-earth-dhd:
+    image: eclipse-mosquitto:2
+    container_name: pocket-universe_stargate-earth-dhd
+    ports:
+      - "1885:1883"
+    volumes:
+      - ./earth-dhd.conf:/mosquitto/config/mosquitto.conf:ro
+    networks:
+      - pocket
+
+  stargate-taurus:
+    image: eclipse-mosquitto:2
+    container_name: pocket-universe_stargate-taurus
+    ports:
+      - "1886:1883"
+    volumes:
+      - ./taurus.conf:/mosquitto/config/mosquitto.conf:ro
+    networks:
+      - pocket
+
+  attestor:
+    build: ./attestor
+    container_name: pocket-universe_attestor
+    ports:
+      - "8080:8080"
+    environment:
+      - MQTT_HOST=stargate-earth-dhd
+      - MQTT_PORT=1883
+      - SECRET_FILE=/data/secret.key
+    volumes:
+      - pocket_data:/data
+    networks:
+      - pocket
+    depends_on:
+      - stargate-earth-dhd
+
+networks:
+  pocket:
+    driver: bridge
+
+volumes:
+  pocket_data:

@@ -1,0 +1,7 @@
+services:
+  mqtt:
+    ports: !override
+      - "1885:1883"
+  attestor:
+    ports: !override
+      - "8082:8080"
